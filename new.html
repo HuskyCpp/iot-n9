@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <style>
+        html {
+            font-family: Arial;
+            display: inline-block;
+            margin: 0px auto;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 3.0rem;
+        }
+
+        p {
+            font-size: 3.0rem;
+        }
+
+        .units {
+            font-size: 1.2rem;
+        }
+
+        .dht-labels {
+            font-size: 1.5rem;
+            vertical-align: middle;
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Giám Sát Nhiệt Độ, Độ Ẩm - Nhóm 9</h2>
+    <p>
+        <i class="fas fa-thermometer-half" id="ico-temp" style="color:#059e8a;"></i>
+        <span class="dht-labels">Nhiệt Độ</span>
+        <span id="nhietdo">%TEMPERATURE%</span>
+        <sup class="units">&deg;C</sup>
+    </p>
+    <p>
+        <i class="fas fa-tint" style="color:#00add6;"></i>
+        <span class="dht-labels">Độ Ẩm</span>
+        <span id="doam">%HUMIDITY%</span>
+        <sup class="units">&percnt;</sup>
+    </p>
+</body>
+<script>
+	var iconTemp = document.getElementById("ico-temp");
+    var nhietdo = document.getElementById("nhietdo");
+    var doam = document.getElementById("doam");
+    var xhttpr = new XMLHttpRequest();
+    xhttpr.onload = ()=>{
+        var resp = JSON.parse(xhttpr.response);
+        var finalData = resp.feeds.pop();
+        if(finalData.field1 >= 32) {
+        nhietdo.style.color = "red"; 
+        iconTemp.style.color = "red";
+        }
+        else {
+        nhietdo.style.color = "black"; 
+        iconTemp.style.color = "#059e8a";
+        }
+        nhietdo.innerHTML = finalData.field1;
+        doam.innerHTML = finalData.field2;
+    };
+    const url = 'https://api.thingspeak.com/channels/1905974/feeds.json?api_key=26AK5O3ILVS32LG8&results=2';
+    // const reqData = {
+    //         api_key:"26AK5O3ILVS32LG8",
+    //     };
+    var second = 1;
+    setInterval(()=>{
+        xhttpr.open('GET',url,true);
+        // xhttpr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+        // xhttpr.send(JSON.stringify(reqData));
+        xhttpr.send();
+    },second*1000);
+</script>
